@@ -1,0 +1,11 @@
+name: dbt_biathlon
+version: '1.0.0'
+profile: dbt_biathlon
+
+model-paths: ["models"]
+target-path: "target"
+clean-targets: ["target", "dbt_packages"]
+
+models:
+  dbt_biathlon:
+    +materialized: table
