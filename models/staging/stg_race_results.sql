@@ -6,7 +6,7 @@ SELECT
     level,
     raceid AS race_id,
     racedescription AS race_description,
-    km::FLOAT AS km,
+    km AS km,
     catid AS cat_id,
     disciplineid AS discipline_id,
     starttime AS start_time,
@@ -25,7 +25,7 @@ SELECT
     leg::INT AS leg,
     rank::INT AS rank,
     shootings,
-    shootingtotal::INT AS shooting_total,
+    shootingtotal AS shooting_total,
     runtime AS run_time,
     totaltime AS total_time,
     wc::INT AS wc,
@@ -37,4 +37,3 @@ SELECT
     pursuitstartdistance AS pursuit_start_distance,
     result
 FROM {{ source('raw', 'races_results_raw') }}
-WHERE irm IS NULL
