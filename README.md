@@ -37,12 +37,13 @@ uv sync
 **Tasks:**
 1. Explore the project structure:
    ```
-   dbt_biathlon/
+   dbt_ibu_lab/
    ├── dbt_project.yml       # Project configuration
+   ├── profiles.yml          # Snowflake connection
    ├── models/               # Where marts will exist
    ├── macros/               # Reusable Jinja macros
    ├── seeds/                # CSV files to load
-   ├── tests/                # Custom tests
+   ├── scripts/              # Utility scripts
    └── target/               # Compiled SQL
    ```
 2. Review `dbt_project.yml` — understand `name`, `profile`, `model-paths`, `materialized`
