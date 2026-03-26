@@ -354,38 +354,56 @@ Try adding this to your rank test. This is useful when you accept known edge cas
 
 ---
 
-## Step 6 — Final mart table
+## Step 6 — Final mart tables
 
-**Goal:** Create the final analytical table joining the star schema.
+**Goal:** Create analytical tables joining the star schema.
 
-**Exercise:** Create `models/marts/mart_athlete_ski_performance.sql` that answers: _How does each athlete perform per discipline?_
+### Exercise 1: Athlete performance per discipline
+
+Complete `models/marts/mart_athlete_ski_performance.sql` — _How does each athlete perform per discipline?_
 
 **Hints:**
 - Join `fct_results` with `dim_athletes` and `dim_races` using `ref()`
-- Filter out rows where `run_time IS NULL`
+- Filter out rows where `rank IS NULL` (IRM results)
 - Group by athlete + discipline
-- Aggregate: `COUNT(*)`, `AVG(run_time)`, `MIN(run_time)`, `AVG(shooting_total)`, `AVG(rank)`
+- Aggregate: `COUNT(*)`, `AVG(shooting_total)`, `AVG(rank)`
+- One row = one athlete per discipline
 
 **Tasks:**
-1. Write the mart model
-2. Add tests and documentation in `_schema.yml`
-3. Run the full pipeline:
+1. Complete the mart model (follow the TODO)
+2. Run and verify:
    ```bash
-   uv run dbt build
+   uv run dbt run --select mart_athlete_ski_performance
    ```
-4. Query the result in Snowflake to answer:
-   - Who has the best average ski time per discipline?
-   - Which nation dominates which discipline?
+3. Query in Snowflake: Which nation dominates which discipline?
+
+### Exercise 2: Season evolution with window functions
+
+Complete `models/marts/mart_athlete_season_evolution.sql` — _How does an athlete's ranking evolve over the season?_
+
+For each athlete and race, compute their **cumulative average rank** ordered by race date. This shows if an athlete is improving or declining throughout the season.
+
+**Hints:**
+- You need a **window function** — this cannot be done with GROUP BY alone!
+- `AVG(rank) OVER(PARTITION BY athlete_id ORDER BY start_time ROWS UNBOUNDED PRECEDING)`
+- Also add `ROW_NUMBER() OVER(...)` to count races completed so far
+- Join `fct_results` with `dim_athletes` and `dim_races`
+- Filter out rows where `rank IS NULL`
+
+**Tasks:**
+1. Complete the mart model (follow the TODO)
+2. Run and verify:
+   ```bash
+   uv run dbt run --select mart_athlete_season_evolution
+   ```
+3. Query in Snowflake: Pick an athlete — is their cumulative average rank going up or down?
 
 **Key concepts:**
-- Mart tables: business-facing, aggregated, ready for consumption
+- Mart tables: business-facing, ready for consumption
 - Joins across the star schema via `ref()`
-- The full pipeline: source → staging → dims/fact → mart
-
-**Questions:**
-- Why do we filter `run_time IS NOT NULL` in the mart?
-- What is the grain of this mart table?
-- How would you add a time dimension to this analysis?
+- Window functions: compute aggregates **without collapsing rows**
+- `PARTITION BY` = the "group", `ORDER BY` = the sequence, `ROWS UNBOUNDED PRECEDING` = cumulative
+- The full pipeline: source → staging → intermediate → dims/fact → mart
 
 ---
 
