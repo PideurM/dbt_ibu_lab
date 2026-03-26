@@ -32,8 +32,8 @@ git checkout step/02-star-schema # Next step (contains step 1 solution)
 ## Course Progress
 
 - [x] Step 1: Init project & Connect to Snowflake
-- [ ] **Step 2: Star Schema (staging, dimensions, fact)** <-- You are here
-- [ ] Step 3: Jinja & macros
+- [x] Step 2: Star Schema (staging, dimensions, fact)
+- [ ] **Step 3: Jinja & macros** <-- You are here
 - [ ] Step 4: Built-in dbt tests
 - [ ] Step 5: Documentation & packages
 - [ ] Step 6: Final mart table (analytics)
@@ -133,6 +133,48 @@ Project initialized with dbt-core + Snowflake connection via `profiles.yml` and 
 - What is the difference between `source()` and `ref()`?
 - Why do we use `SELECT DISTINCT` in dimension tables but not in the fact table?
 - What happens if you run `dbt run --select fct_results` without running staging first?
+
+---
+
+## Step 3 — Jinja & macros
+
+**Goal:** Learn Jinja templating by creating a reusable macro.
+
+**Theory — Jinja basics:**
+- `{{ }}` — expressions: output a value (variable, function call, macro)
+- `{% %}` — statements: control flow (if, for, macro, set)
+- `{# #}` — comments: ignored in compiled SQL
+- dbt compiles Jinja → pure SQL before sending to Snowflake
+
+**Tasks:**
+1. Create `macros/parse_iso_timestamp.sql`:
+   ```sql
+   {% macro parse_iso_timestamp(column_name) %}
+       TRY_TO_TIMESTAMP_NTZ({{ column_name }}, 'YYYY-MM-DD"T"HH24:MI:SSZ')
+   {% endmacro %}
+   ```
+2. Use it in `dim_races.sql` to parse `start_time`
+3. See the compiled SQL:
+   ```bash
+   uv run dbt compile --select dim_races
+   cat target/compiled/dbt_biathlon/models/marts/dim_races.sql
+   ```
+4. **Exercise:** Create a `convert_time_to_seconds` macro that converts `MM:SS.s` format to total seconds using `{% if %}`. Use it in `fct_results.sql` for `run_time`.
+5. Run and verify:
+   ```bash
+   uv run dbt run
+   ```
+
+**Key concepts:**
+- Macros = reusable SQL functions written in Jinja
+- `dbt compile` — see the generated SQL without running it
+- DRY principle: write once, use everywhere
+- Jinja is a Python templating language — dbt runs it at compile time
+
+**Questions:**
+- What is the difference between `{{ }}` and `{% %}`?
+- Why is `dbt compile` useful for debugging?
+- How would you pass multiple arguments to a macro?
 
 ---
 
