@@ -1,8 +1,4 @@
-{# TODO: Create a macro that splits a 'prone+standing' shootings column into two columns
-   Example: '0+1' → shootings = '0', shootings_spare = '1'
-   Hint: Use LEFT(), RIGHT(), LENGTH(), and POSITION('+' IN ...)
-   The macro should output TWO columns separated by a comma #}
-
 {% macro select_spares(column_name) %}
-    {{ column_name }}
+    LEFT({{ column_name }}, POSITION('+' IN {{ column_name }}) - 1) AS {{ column_name }},
+    RIGHT({{ column_name }}, LENGTH({{ column_name }}) - POSITION('+' IN {{ column_name }})) AS {{ column_name }}_spare
 {% endmacro %}
