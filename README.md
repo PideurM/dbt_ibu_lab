@@ -153,8 +153,7 @@ Project initialized with dbt-core + Snowflake connection via `profiles.yml` and 
    ```bash
    uv run dbt run --select cleaned_measures_raw
    ```
-2. Observe the error: `km` contains relay formats like `4x6` and `shootings` contains `0+1` — direct `::FLOAT` casting fails!
-3. This is why we need an **intermediate cleaning step** using macros.
+2. Observe the error: What is happening ?
 
 ### Step 3.2 — The `parse_iso_timestamp` macro (demo)
 
