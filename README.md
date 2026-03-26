@@ -138,7 +138,7 @@ Project initialized with dbt-core + Snowflake connection via `profiles.yml` and 
 
 ## Step 3 — Jinja & macros
 
-**Goal:** Learn Jinja templating by creating a reusable macro.
+**Goal:** Learn Jinja templating by creating reusable macros to solve real data quality issues.
 
 **Theory — Jinja basics:**
 - `{{ }}` — expressions: output a value (variable, function call, macro)
@@ -146,23 +146,45 @@ Project initialized with dbt-core + Snowflake connection via `profiles.yml` and 
 - `{# #}` — comments: ignored in compiled SQL
 - dbt compiles Jinja → pure SQL before sending to Snowflake
 
+### Step 3.1 — Discover the problem
+
 **Tasks:**
-1. Create `macros/parse_iso_timestamp.sql`:
-   ```sql
-   {% macro parse_iso_timestamp(column_name) %}
-       TRY_TO_TIMESTAMP_NTZ({{ column_name }}, 'YYYY-MM-DD"T"HH24:MI:SSZ')
-   {% endmacro %}
+1. Run `cleaned_measures_raw.sql` — a naive attempt to cast columns:
+   ```bash
+   uv run dbt run --select cleaned_measures_raw
    ```
-2. Use it in `dim_races.sql` to parse `start_time`
+2. Observe the error: `km` contains relay formats like `4x6` and `shootings` contains `0+1` — direct `::FLOAT` casting fails!
+3. This is why we need an **intermediate cleaning step** using macros.
+
+### Step 3.2 — The `parse_iso_timestamp` macro (demo)
+
+1. Review `macros/parse_iso_timestamp.sql` — a macro that parses ISO timestamps
+2. See how it's used in `dim_races.sql` for `start_time`
 3. See the compiled SQL:
    ```bash
    uv run dbt compile --select dim_races
    cat target/compiled/dbt_biathlon/models/marts/dim_races.sql
    ```
-4. **Exercise:** Create a `convert_time_to_seconds` macro that converts `MM:SS.s` format to total seconds using `{% if %}`. Use it in `fct_results.sql` for `run_time`.
-5. Run and verify:
+
+### Step 3.3 — Exercise: Create your own macros
+
+Now it's your turn! Open `models/intermediate/cleaned_measures.sql` and the macro files — follow the TODO comments.
+
+**Exercise 1:** Complete `macros/clear_km_relay.sql`
+- Goal: extract the km value from relay format (e.g., `4x6` → `6`)
+- Hint: use `RIGHT()`, `LENGTH()`, and `POSITION('x' IN ...)`
+- Don't forget to add an `AS` alias!
+
+**Exercise 2:** Complete `macros/select_spares.sql`
+- Goal: split the `shootings` column (`0+1`) into two columns: `shootings` (prone) and `shootings_spare` (standing)
+- Hint: use `LEFT()`, `RIGHT()`, `LENGTH()`, and `POSITION('+' IN ...)`
+- The macro must output **two columns** separated by a comma
+
+**Exercise 3:** Update `models/intermediate/cleaned_measures.sql`
+- Replace the TODO placeholders with calls to your macros
+- Run and verify:
    ```bash
-   uv run dbt run
+   uv run dbt run --select cleaned_measures
    ```
 
 **Key concepts:**
@@ -170,11 +192,12 @@ Project initialized with dbt-core + Snowflake connection via `profiles.yml` and 
 - `dbt compile` — see the generated SQL without running it
 - DRY principle: write once, use everywhere
 - Jinja is a Python templating language — dbt runs it at compile time
+- Intermediate models handle data quality issues between staging and marts
 
 **Questions:**
 - What is the difference between `{{ }}` and `{% %}`?
 - Why is `dbt compile` useful for debugging?
-- How would you pass multiple arguments to a macro?
+- Why did `cleaned_measures_raw.sql` fail but `stg_race_results.sql` didn't?
 
 ---
 
