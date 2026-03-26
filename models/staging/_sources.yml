@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: raw
-    database: DBT_IBU_LAB
-    schema: RAW
+    database: IBU
+    schema: RACES
     tables:
       - name: races_results_raw
