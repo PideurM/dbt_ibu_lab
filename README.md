@@ -186,6 +186,11 @@ Now it's your turn! Open `models/intermediate/cleaned_measures.sql` and the macr
    uv run dbt run --select cleaned_measures
    ```
 
+**Exercise 4** Update the fct_results ref for cleaned_measures
+   ```bash
+   uv run dbt run --select fct_results
+   ```
+
 **Key concepts:**
 - Macros = reusable SQL functions written in Jinja
 - `dbt compile` — see the generated SQL without running it
