@@ -8,4 +8,4 @@ clean-targets: ["target", "dbt_packages"]
 
 models:
   dbt_biathlon:
-    +materialized: table
+    +materialized: view
