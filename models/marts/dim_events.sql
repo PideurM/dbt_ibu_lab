@@ -1,6 +1,6 @@
 {# TODO: Create a dimension table for events
    - Use SELECT DISTINCT to deduplicate
-   - Include: event_id, event_description, short_description, country (renamed from nat), level
+   - I let you decide which columns to include
    - Reference the staging model with {{ ref('stg_race_results') }} #}
 
 SELECT DISTINCT

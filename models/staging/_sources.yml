@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: raw
-    database: IBU
-    schema: RACES
+    database: "{{ env_var('SNOWFLAKE_DATABASE') }}"
+    schema: "{{ env_var('SNOWFLAKE_SCHEMA') }}"
     tables:
       - name: races_results_raw
