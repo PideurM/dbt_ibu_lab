@@ -59,7 +59,7 @@ uv sync
 
 **Tasks:**
 1. Create a `.env` file based on `.env.sample` with your Snowflake credentials
-2. Ensure `.env` is in `.gitignore` (already done!)
+2. Ensure `.env` is in `.gitignore` 
 3. Review `profiles.yml` — notice how `{{ env_var() }}` reads from `.env`
 4. Test the connection:
    ```bash
@@ -67,7 +67,7 @@ uv sync
    ```
 5. Load data to Snowflake:
    ```bash
-   uv run python scripts/load_to_snowflake.py
+   uv run scripts/load_to_snowflake.py
    ```
 6. Verify data in Snowflake
 
