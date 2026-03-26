@@ -31,8 +31,8 @@ git checkout step/02-star-schema # Next step (contains step 1 solution)
 
 ## Course Progress
 
-- [ ] **Step 1: Init project & Connect to Snowflake** <-- You are here
-- [ ] Step 2: Star Schema (staging, dimensions, fact)
+- [x] Step 1: Init project & Connect to Snowflake
+- [ ] **Step 2: Star Schema (staging, dimensions, fact)** <-- You are here
 - [ ] Step 3: Jinja & macros
 - [ ] Step 4: Built-in dbt tests
 - [ ] Step 5: Documentation & packages
@@ -41,65 +41,98 @@ git checkout step/02-star-schema # Next step (contains step 1 solution)
 
 ---
 
-## Step 1 — Init project & Connect to Snowflake
+## Step 1 — Init project & Connect to Snowflake (completed)
 
-### Step 1.1 — Understand the dbt project structure
+Project initialized with dbt-core + Snowflake connection via `profiles.yml` and `env_var()`. Data loaded with `scripts/load_to_snowflake.py`.
 
-**Goal:** Understand the dbt project structure.
+---
 
-**Tasks:**
-1. Explore the project structure:
-   ```
-   dbt_ibu_lab/
-   ├── dbt_project.yml       # Project configuration
-   ├── profiles.yml          # Snowflake connection
-   ├── models/               # Where marts will exist
-   ├── macros/               # Reusable Jinja macros
-   ├── seeds/                # CSV files to load
-   ├── scripts/              # Utility scripts
-   └── target/               # Compiled SQL
-   ```
-2. Review `dbt_project.yml` — understand `name`, `profile`, `model-paths`, `materialized`
+## Step 2 — Create Star Schema
 
-**Key concepts:**
-- What is dbt? A transformation tool — it handles the **T** in ELT
-- dbt compiles Jinja+SQL → pure SQL → runs it on your warehouse
-- Convention over configuration: folder structure drives behavior
+### Step 2.1 — Staging model
 
-### Step 1.2 — Connect to Snowflake & load data
-
-**Goal:** Connect dbt to Snowflake and load the raw CSV data.
+**Goal:** Create the first dbt model and define a source.
 
 **Tasks:**
-1. Create a `.env` file based on `.env.sample` with your Snowflake credentials
-2. Ensure `.env` is in `.gitignore`
-3. Load the environment variables:
-   ```bash
-   set -a
-   source .env
-   set +a
+1. Create the folder structure:
    ```
-   > **Why not just `source .env`?** When you do `source .env`, the variables exist in your current shell session but are **not passed down** to child processes. `dbt debug` runs as a child process — it won't see your variables unless they are **exported**. `set -a` tells your shell to automatically `export` every variable assignment, so `source .env` exports everything. `set +a` turns off auto-export afterward.
-4. Review `profiles.yml` — notice how `{{ env_var() }}` reads from environment variables
-5. Test the connection:
-   ```bash
-   uv run dbt debug
+   models/
+   └── staging/
+       ├── _sources.yml
+       └── stg_race_results.sql
    ```
-5. Load data to Snowflake:
-   ```bash
-   uv run scripts/load_to_snowflake.py
+2. Define the source in `_sources.yml`:
+   ```yaml
+   version: 2
+   sources:
+     - name: raw
+       database: DBT_IBU_LAB
+       schema: RAW
+       tables:
+         - name: races_results_raw
    ```
-6. Verify data in Snowflake
+3. Write `stg_race_results.sql`:
+   - Reference the source with `{{ source('raw', 'races_results_raw') }}`
+   - Rename columns to snake_case
+   - Cast types (e.g., `km` → FLOAT, `rank` → INT, `is_team` → BOOLEAN)
+   - Filter out invalid records (`IRM IS NULL`)
+4. Run and verify:
+   ```bash
+   uv run dbt run --select stg_race_results
+   ```
 
 **Key concepts:**
-- `profiles.yml` — connection profiles, targets (dev/prod)
-- `{{ env_var() }}` — first taste of Jinja: reading environment variables
-- Never commit credentials
+- `{{ source() }}` — referencing raw tables
+- `_sources.yml` — declaring source tables
+- Staging models: clean, rename, cast — no business logic
+- `stg_` naming convention
+
+### Step 2.2 — Dimension tables
+
+**Goal:** Build the star schema dimension tables.
+
+**Tasks:**
+1. Create dimension models in `models/marts/`:
+   - `dim_athletes.sql` — unique athletes with nationality
+   - `dim_events.sql` — unique events with location and level
+   - `dim_races.sql` — unique races with discipline and distance
+2. Use `{{ ref('stg_race_results') }}` to reference the staging model
+3. Use `SELECT DISTINCT` to deduplicate from the flat source
+4. Run all models:
+   ```bash
+   uv run dbt run
+   ```
+
+**Key concepts:**
+- `{{ ref() }}` — referencing other models (creates dependencies)
+- Dimension tables: descriptive attributes, no metrics
+- Star schema: dimensions describe the "who/what/where/when"
+- dbt builds models in dependency order automatically
+
+### Step 2.3 — Fact table
+
+**Goal:** Build the central fact table connecting all dimensions.
+
+**Tasks:**
+1. Create `models/marts/fct_results.sql`:
+   - Select measurable columns: rank, shootings, run_time, total_time, etc.
+   - Include foreign keys: athlete_id, race_id, event_id
+2. Discuss grain: one row = one athlete in one race
+3. Run the full pipeline:
+   ```bash
+   uv run dbt run
+   ```
+4. Check the execution order in terminal output
+
+**Key concepts:**
+- Fact tables: measurable events, foreign keys to dimensions
+- Grain — what does each row represent?
+- The full pipeline runs staging → dimensions → fact in order
 
 **Questions:**
-- What does `dbt debug` check?
-- Why do we use `env_var()` instead of hardcoding credentials?
-- What is the difference between ELT and ETL?
+- What is the difference between `source()` and `ref()`?
+- Why do we use `SELECT DISTINCT` in dimension tables but not in the fact table?
+- What happens if you run `dbt run --select fct_results` without running staging first?
 
 ---
 
