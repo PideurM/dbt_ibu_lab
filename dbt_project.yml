@@ -3,6 +3,7 @@ version: '1.0.0'
 profile: dbt_biathlon
 
 model-paths: ["models"]
+seed-paths: []
 target-path: "target"
 clean-targets: ["target", "dbt_packages"]
 
