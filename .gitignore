@@ -11,10 +11,16 @@ wheels/
 
 # Secrets
 .env
-.env.*
+
 *.pem
 *.key
 
 # Dbt
-dbt_biathlon/.user.yml
+dbt_biathlon/
+dbt_packages/
+target/
+logs/
+.user.yml
 
+# Claude
+.claude/
