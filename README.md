@@ -35,8 +35,8 @@ git checkout step/02-star-schema # Next step (contains step 1 solution)
 - [x] Step 2: Star Schema (staging, dimensions, fact)
 - [x] Step 3: Jinja & macros
 - [x] Step 4: Built-in dbt tests
-- [ ] **Step 5: Documentation & packages** <-- You are here
-- [ ] Step 6: Final mart table (analytics)
+- [x] Step 5: Documentation & packages
+- [ ] **Step 6: Final mart table (analytics)** <-- You are here
 - [ ] Step 7: CI/CD with GitHub Actions
 
 ---
@@ -351,6 +351,41 @@ Try adding this to your rank test. This is useful when you accept known edge cas
 - What does `generate_surrogate_key` produce? Why is it useful?
 - Where are installed packages stored?
 - How do community tests differ from built-in tests?
+
+---
+
+## Step 6 — Final mart table
+
+**Goal:** Create the final analytical table joining the star schema.
+
+**Exercise:** Create `models/marts/mart_athlete_ski_performance.sql` that answers: _How does each athlete perform per discipline?_
+
+**Hints:**
+- Join `fct_results` with `dim_athletes` and `dim_races` using `ref()`
+- Filter out rows where `run_time IS NULL`
+- Group by athlete + discipline
+- Aggregate: `COUNT(*)`, `AVG(run_time)`, `MIN(run_time)`, `AVG(shooting_total)`, `AVG(rank)`
+
+**Tasks:**
+1. Write the mart model
+2. Add tests and documentation in `_schema.yml`
+3. Run the full pipeline:
+   ```bash
+   uv run dbt build
+   ```
+4. Query the result in Snowflake to answer:
+   - Who has the best average ski time per discipline?
+   - Which nation dominates which discipline?
+
+**Key concepts:**
+- Mart tables: business-facing, aggregated, ready for consumption
+- Joins across the star schema via `ref()`
+- The full pipeline: source → staging → dims/fact → mart
+
+**Questions:**
+- Why do we filter `run_time IS NOT NULL` in the mart?
+- What is the grain of this mart table?
+- How would you add a time dimension to this analysis?
 
 ---
 
