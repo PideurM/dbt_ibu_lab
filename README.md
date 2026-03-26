@@ -36,8 +36,8 @@ git checkout step/02-star-schema # Next step (contains step 1 solution)
 - [x] Step 3: Jinja & macros
 - [x] Step 4: Built-in dbt tests
 - [x] Step 5: Documentation & packages
-- [ ] **Step 6: Final mart table (analytics)** <-- You are here
-- [ ] Step 7: CI/CD with GitHub Actions
+- [x] Step 6: Final mart table (analytics)
+- [ ] **Step 7: CI/CD with GitHub Actions** <-- You are here
 
 ---
 
@@ -404,6 +404,34 @@ For each athlete and race, compute their **cumulative average rank** ordered by 
 - Window functions: compute aggregates **without collapsing rows**
 - `PARTITION BY` = the "group", `ORDER BY` = the sequence, `ROWS UNBOUNDED PRECEDING` = cumulative
 - The full pipeline: source → staging → intermediate → dims/fact → mart
+
+---
+
+## Step 7 — CI/CD with GitHub Actions
+
+**Goal:** Automate dbt build and tests on every push.
+
+**Tasks:**
+1. Create `.github/workflows/dbt_ci.yml` with a workflow that:
+   - Triggers on push/PR to `main`
+   - Sets up uv and installs dependencies
+   - Runs `dbt deps` then `dbt build`
+   - Uses GitHub Secrets for Snowflake credentials
+2. Add Snowflake secrets in GitHub: **Settings → Secrets → Actions**
+   - `SNOWFLAKE_ACCOUNT`, `SNOWFLAKE_USER`, `SNOWFLAKE_PASSWORD`
+   - `SNOWFLAKE_ROLE`, `SNOWFLAKE_WAREHOUSE`, `SNOWFLAKE_DATABASE`, `SNOWFLAKE_SCHEMA`
+3. Push and observe the workflow run in the **Actions** tab
+
+**Key concepts:**
+- CI/CD — automated quality gates on every push
+- GitHub Secrets — secure credential management
+- `dbt build` in CI ensures models compile, run, and pass tests
+- Every push triggers the pipeline automatically
+
+**Questions:**
+- Why do we use GitHub Secrets instead of a `.env` file in CI?
+- What happens if a dbt test fails in CI?
+- How would you add a separate production target?
 
 ---
 
