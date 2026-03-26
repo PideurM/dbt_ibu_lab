@@ -2,49 +2,100 @@ version: 2
 
 models:
   - name: dim_athletes
+    description: "Dimension table containing unique biathlon athletes and their nationality."
     columns:
       - name: athlete_id
+        description: "IBU unique identifier for the athlete."
         tests:
           - unique
           - not_null
+      - name: family_name
+        description: "Athlete's family name."
+      - name: given_name
+        description: "Athlete's given name."
+      - name: short_name
+        description: "Abbreviated athlete name."
+      - name: athlete_nat
+        description: "Athlete's nationality (ISO country code)."
 
   - name: dim_events
+    description: "Dimension table containing unique biathlon events (competitions)."
     columns:
       - name: event_id
+        description: "Unique event identifier."
         tests:
           - unique
           - not_null
+      - name: event_description
+        description: "Full name of the event."
+      - name: short_description
+        description: "Short name / location of the event."
+      - name: country
+        description: "Country hosting the event (ISO code)."
       - name: level
+        description: "Competition level (1=World Cup, 2=IBU Cup, etc.)."
         tests:
           - accepted_values:
               values: ['1', '2', '3', '4', '6']
 
   - name: dim_races
+    description: "Dimension table containing unique races within events."
     columns:
       - name: race_id
+        description: "Unique race identifier."
         tests:
           - unique
           - not_null
       - name: event_id
+        description: "Foreign key to dim_events."
         tests:
           - relationships:
               to: ref('dim_events')
               field: event_id
+      - name: race_description
+        description: "Full description of the race."
+      - name: km
+        description: "Race distance in kilometers."
+      - name: cat_id
+        description: "Category identifier (e.g., SM=Senior Men, JW=Junior Women)."
+      - name: discipline_id
+        description: "Discipline type (SP=Sprint, PU=Pursuit, MS=Mass Start, etc.)."
+      - name: start_time
+        description: "Race start timestamp."
+      - name: status_text
+        description: "Race status (e.g., Final, Cancelled)."
 
   - name: fct_results
+    description: "Fact table with one row per athlete per race, containing performance metrics."
     columns:
       - name: athlete_id
+        description: "Foreign key to dim_athletes."
         tests:
           - not_null
           - relationships:
               to: ref('dim_athletes')
               field: athlete_id
       - name: race_id
+        description: "Foreign key to dim_races."
         tests:
           - not_null
           - relationships:
               to: ref('dim_races')
               field: race_id
       - name: rank
+        description: "Final ranking position in the race."
         tests:
-          - not_null
+          - not_null:
+              where: "irm IS NULL"
+      - name: shootings
+        description: "Shooting results per stage (e.g., '0+1+0+2')."
+      - name: shooting_total
+        description: "Total number of missed shots."
+      - name: run_time
+        description: "Ski time excluding penalties."
+      - name: total_time
+        description: "Total race time including penalties."
+      - name: behind
+        description: "Time behind the winner."
+      - name: wc
+        description: "World Cup points earned."

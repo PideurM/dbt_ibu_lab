@@ -2,7 +2,9 @@ version: 2
 
 sources:
   - name: raw
+    description: "Raw data loaded from IBU biathlon API."
     database: "{{ env_var('SNOWFLAKE_DATABASE') }}"
     schema: "{{ env_var('SNOWFLAKE_SCHEMA') }}"
     tables:
       - name: races_results_raw
+        description: "Flat table with all race results for the 2024-2025 season."
