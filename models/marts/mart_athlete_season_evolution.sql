@@ -1,17 +1,33 @@
-{# TODO: Create a mart showing each athlete's ranking evolution over the season.
-   For each athlete and race, compute:
-   - Their cumulative average rank across the season (ordered by race start_time)
-   - The number of races completed so far
-
-   This requires a WINDOW FUNCTION — you cannot do this with GROUP BY alone!
-
-   Hint:
-     AVG(rank) OVER(PARTITION BY ... ORDER BY ... ROWS UNBOUNDED PRECEDING)
-
-   Join fct_results with dim_athletes and dim_races.
-   Filter out rows where rank IS NULL (IRM results). #}
+WITH results AS (
+    SELECT
+        f.athlete_id,
+        a.family_name,
+        a.given_name,
+        a.athlete_nat,
+        f.race_id,
+        r.race_description,
+        r.discipline_id,
+        r.start_time,
+        f.rank,
+        f.shooting_total
+    FROM {{ ref('fct_results') }} f
+    LEFT JOIN {{ ref('dim_athletes') }} a ON f.athlete_id = a.athlete_id
+    LEFT JOIN {{ ref('dim_races') }} r ON f.race_id = r.race_id
+    WHERE f.rank IS NOT NULL
+)
 
 SELECT
-    f.athlete_id
-    -- TODO: complete the query with window functions
-FROM {{ ref('fct_results') }} f
+    athlete_id,
+    family_name,
+    given_name,
+    athlete_nat,
+    race_id,
+    race_description,
+    discipline_id,
+    start_time,
+    rank,
+    shooting_total,
+    ROW_NUMBER() OVER(PARTITION BY athlete_id ORDER BY start_time) AS race_number,
+    AVG(rank) OVER(PARTITION BY athlete_id ORDER BY start_time ROWS UNBOUNDED PRECEDING) AS cumulative_avg_rank,
+    AVG(shooting_total) OVER(PARTITION BY athlete_id ORDER BY start_time ROWS UNBOUNDED PRECEDING) AS cumulative_avg_shooting
+FROM results

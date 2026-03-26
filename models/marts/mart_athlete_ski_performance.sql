@@ -1,11 +1,26 @@
-{# TODO: Create an analytical mart aggregating athlete performance by discipline.
-   - Join fct_results with dim_athletes and dim_races using ref()
-   - Filter out rows where rank IS NULL
-   - Group by athlete + discipline
-   - Aggregate: COUNT(*), AVG(shooting_total), AVG(rank)
-   - One row = one athlete per discipline #}
+WITH results AS (
+    SELECT
+        f.athlete_id,
+        a.family_name,
+        a.given_name,
+        a.athlete_nat,
+        r.discipline_id,
+        f.shooting_total,
+        f.rank
+    FROM {{ ref('fct_results') }} f
+    LEFT JOIN {{ ref('dim_athletes') }} a ON f.athlete_id = a.athlete_id
+    LEFT JOIN {{ ref('dim_races') }} r ON f.race_id = r.race_id
+    WHERE f.rank IS NOT NULL
+)
 
 SELECT
-    f.athlete_id
-    -- TODO: complete the query
-FROM {{ ref('fct_results') }} f
+    athlete_id,
+    family_name,
+    given_name,
+    athlete_nat,
+    discipline_id,
+    COUNT(*) AS race_count,
+    AVG(shooting_total) AS avg_shooting_total,
+    AVG(rank) AS avg_rank
+FROM results
+GROUP BY athlete_id, family_name, given_name, athlete_nat, discipline_id
