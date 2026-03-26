@@ -1,12 +1,22 @@
-{# TODO: Create a fact table for race results
-   - One row = one athlete in one race (the grain)
-   - Include foreign keys: athlete_id (renamed from ibu_id), race_id, event_id
-   - Include measures: I let you decide which ones to include.
-   - Reference the staging model with {{ ref('stg_race_results') }} #}
-
 SELECT
     r.ibu_id AS athlete_id,
     r.race_id,
-    r.event_id
-    -- TODO: add the remaining result columns
-FROM {{ ref('stg_race_results') }} r
+    r.event_id,
+    r.start_order,
+    r.result_order,
+    r.irm,
+    r.bib,
+    r.leg,
+    r.rank,
+    r.shootings,
+    r.shootings_spare,
+    r.shooting_total,
+    r.run_time,
+    r.total_time,
+    r.behind,
+    r.wc,
+    r.nc,
+    r.noc,
+    r.start_group,
+    r.result
+FROM {{ ref('cleaned_measures') }} r
