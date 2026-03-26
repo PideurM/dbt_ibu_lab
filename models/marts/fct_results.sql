@@ -1,4 +1,5 @@
 SELECT
+    {{ dbt_utils.generate_surrogate_key(['ibu_id', 'race_id']) }} AS result_id,
     r.ibu_id AS athlete_id,
     r.race_id,
     r.event_id,

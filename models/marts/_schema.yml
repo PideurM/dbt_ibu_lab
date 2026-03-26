@@ -82,15 +82,28 @@ models:
           - relationships:
               to: ref('dim_races')
               field: race_id
+      - name: result_id
+        description: "Surrogate key generated from athlete_id and race_id."
+        tests:
+          - unique
+          - not_null
       - name: rank
         description: "Final ranking position in the race."
         tests:
           - not_null:
               where: "irm IS NULL"
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 1
+              max_value: 200
+              row_condition: "rank IS NOT NULL"
       - name: shootings
         description: "Shooting results per stage (e.g., '0+1+0+2')."
       - name: shooting_total
         description: "Total number of missed shots."
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 20
       - name: run_time
         description: "Ski time excluding penalties."
       - name: total_time
