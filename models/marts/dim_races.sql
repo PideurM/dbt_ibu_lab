@@ -1,9 +1,10 @@
-{# TODO: Create a dimension table for races
-   - Use SELECT DISTINCT to deduplicate
-   - I let you decide which columns to include
-   - Reference the staging model with {{ ref('stg_race_results') }} #}
-
 SELECT DISTINCT
-    race_id
-    -- TODO: add the remaining race columns
+    race_id,
+    event_id,
+    race_description,
+    km,
+    cat_id,
+    discipline_id,
+    {{ parse_iso_timestamp('start_time') }} AS start_time,
+    status_text
 FROM {{ ref('stg_race_results') }}
