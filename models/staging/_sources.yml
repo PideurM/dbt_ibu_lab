@@ -1,0 +1,8 @@
+version: 2
+
+sources:
+  - name: raw
+    database: DBT_IBU_LAB
+    schema: RAW
+    tables:
+      - name: races_results_raw
