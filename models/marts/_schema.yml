@@ -1,0 +1,47 @@
+version: 2
+
+models:
+  - name: dim_athletes
+    columns:
+      - name: athlete_id
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_events
+    columns:
+      - name: event_id
+        tests:
+          - unique
+          - not_null
+      - name: level
+        tests:
+          - accepted_values:
+              values: ['1', '2', '3', '4', '6']
+
+  - name: dim_races
+    columns:
+      - name: race_id
+        tests:
+          - unique
+          - not_null
+      - name: event_id
+        tests:
+          - relationships:
+              to: ref('dim_events')
+              field: event_id
+
+  - name: fct_results
+    columns:
+      - name: athlete_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_athletes')
+              field: athlete_id
+      - name: race_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_races')
+              field: race_id
