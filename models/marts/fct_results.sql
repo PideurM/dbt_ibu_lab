@@ -1,0 +1,20 @@
+SELECT
+    r.ibu_id AS athlete_id,
+    r.race_id,
+    r.event_id,
+    r.start_order,
+    r.result_order,
+    r.bib,
+    r.leg,
+    r.rank,
+    r.shootings,
+    r.shooting_total,
+    r.run_time,
+    r.total_time,
+    r.behind,
+    r.wc,
+    r.nc,
+    r.noc,
+    r.start_group,
+    r.result
+FROM {{ ref('stg_race_results') }} r
