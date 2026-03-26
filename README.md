@@ -33,8 +33,8 @@ git checkout step/02-star-schema # Next step (contains step 1 solution)
 
 - [x] Step 1: Init project & Connect to Snowflake
 - [x] Step 2: Star Schema (staging, dimensions, fact)
-- [ ] **Step 3: Jinja & macros** <-- You are here
-- [ ] Step 4: Built-in dbt tests
+- [x] Step 3: Jinja & macros
+- [ ] **Step 4: Built-in dbt tests** <-- You are here
 - [ ] Step 5: Documentation & packages
 - [ ] Step 6: Final mart table (analytics)
 - [ ] Step 7: CI/CD with GitHub Actions
@@ -209,6 +209,43 @@ Now it's your turn! Open `models/intermediate/cleaned_measures.sql` and the macr
 - What is the difference between `{{ }}` and `{% %}`?
 - Why is `dbt compile` useful for debugging?
 - Why did `cleaned_measures_raw.sql` fail but `stg_race_results.sql` didn't?
+
+---
+
+## Step 4 — Built-in dbt tests
+
+**Goal:** Add data quality tests to the models.
+
+**Tasks:**
+1. Create `models/marts/_schema.yml` with tests for all mart models
+2. Use the 4 built-in test types:
+   - `unique` — no duplicate values
+   - `not_null` — no NULL values
+   - `accepted_values` — column values must be in a list
+   - `relationships` — foreign key integrity (value exists in another model)
+3. Run the tests:
+   ```bash
+   uv run dbt test
+   ```
+4. Observe which tests pass and which fail — discuss why
+5. Try `dbt build` (run + test together):
+   ```bash
+   uv run dbt build
+   ```
+
+**Exercise:** Add tests for `stg_race_results` in a new `models/staging/_schema.yml`. What columns should be tested?
+
+**Key concepts:**
+- 4 built-in tests: `unique`, `not_null`, `accepted_values`, `relationships`
+- Tests are SQL queries — a test fails if it returns rows
+- `_schema.yml` — model documentation + tests in one file
+- `dbt build` = `dbt run` + `dbt test` in dependency order
+- Tests catch data quality issues early
+
+**Questions:**
+- What SQL does dbt generate for a `unique` test?
+- Why might a `relationships` test fail?
+- When should you use `dbt build` vs `dbt run` + `dbt test` separately?
 
 ---
 
