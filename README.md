@@ -34,8 +34,8 @@ git checkout step/02-star-schema # Next step (contains step 1 solution)
 - [x] Step 1: Init project & Connect to Snowflake
 - [x] Step 2: Star Schema (staging, dimensions, fact)
 - [x] Step 3: Jinja & macros
-- [ ] **Step 4: Built-in dbt tests** <-- You are here
-- [ ] Step 5: Documentation & packages
+- [x] Step 4: Built-in dbt tests
+- [ ] **Step 5: Documentation & packages** <-- You are here
 - [ ] Step 6: Final mart table (analytics)
 - [ ] Step 7: CI/CD with GitHub Actions
 
@@ -274,6 +274,68 @@ Try adding this to your rank test. This is useful when you accept known edge cas
 - What SQL does dbt generate for a `unique` test?
 - Why might a `relationships` test fail?
 - When should you use `dbt build` vs `dbt run` + `dbt test` separately?
+
+---
+
+## Step 5 — Documentation & packages
+
+### Step 5.1 — Documentation & DAG
+
+**Goal:** Generate and explore project documentation.
+
+**Tasks:**
+1. Add descriptions to `models/marts/_schema.yml` for all models and columns
+2. Add descriptions to `models/staging/_sources.yml`
+3. Generate and serve the documentation:
+   ```bash
+   uv run dbt docs generate
+   uv run dbt docs serve
+   ```
+4. Open the browser and explore:
+   - Model pages: descriptions, columns, SQL
+   - **DAG view** (bottom-right icon): visualize the dependency graph
+   - Observe: source → staging → dimensions/fact
+
+**Key concepts:**
+- Documentation is defined alongside the code in YAML
+- `dbt docs generate` compiles a static website
+- The DAG shows the full data lineage
+- How `ref()` and `source()` build the DAG automatically
+
+### Step 5.2 — dbt packages
+
+**Goal:** Install external packages and use their macros/tests.
+
+**Tasks:**
+1. Create `packages.yml` at the project root:
+   ```yaml
+   packages:
+     - package: dbt-labs/dbt_utils
+       version: [">=1.0.0", "<2.0.0"]
+     - package: calogica/dbt_expectations
+       version: [">=0.10.0", "<1.0.0"]
+   ```
+2. Install packages:
+   ```bash
+   uv run dbt deps
+   ```
+3. Use `dbt_utils.generate_surrogate_key` in `fct_results.sql` to create a `result_id`
+4. Add tests from `dbt_expectations` in `_schema.yml` (e.g., `expect_column_values_to_be_between`)
+5. Run:
+   ```bash
+   uv run dbt build
+   ```
+
+**Key concepts:**
+- `packages.yml` + `dbt deps` — dependency management for dbt
+- dbt_utils: utility macros (surrogate keys, pivots, etc.)
+- dbt_expectations: Great Expectations-style tests in dbt
+- Community packages extend dbt without writing custom code
+
+**Questions:**
+- What does `generate_surrogate_key` produce? Why is it useful?
+- Where are installed packages stored?
+- How do community tests differ from built-in tests?
 
 ---
 
