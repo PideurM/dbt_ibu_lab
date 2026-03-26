@@ -45,3 +45,6 @@ models:
           - relationships:
               to: ref('dim_races')
               field: race_id
+      - name: rank
+        tests:
+          - not_null

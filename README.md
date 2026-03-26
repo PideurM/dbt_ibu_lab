@@ -233,7 +233,19 @@ Now it's your turn! Open `models/intermediate/cleaned_measures.sql` and the macr
    uv run dbt build
    ```
 
-**Exercise:** Add tests for `stg_race_results` in a new `models/staging/_schema.yml`. What columns should be tested?
+### Exercise 1: A test that fails
+
+1. Run the tests:
+   ```bash
+   uv run dbt test
+   ```
+2. The `not_null` test on `fct_results.rank` **fails**. Why?
+3. Investigate: what rows have a NULL rank? Look at the `irm` column — what does it contain? (DNF, DNS, LAP, DSQ...)
+4. **Fix the test** so it passes: rank can be NULL, but **only when IRM is not NULL**. Hint: the `not_null` test accepts a `where` config.
+
+### Exercise 2: Add your own tests
+
+Add tests for `stg_race_results` in a new `models/staging/_schema.yml`. What columns should be tested?
 
 **Key concepts:**
 - 4 built-in tests: `unique`, `not_null`, `accepted_values`, `relationships`
