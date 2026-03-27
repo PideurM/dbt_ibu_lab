@@ -37,7 +37,7 @@ git checkout step/02-star-schema # Next step (contains step 1 solution)
 - [x] Step 4: Built-in dbt tests
 - [x] Step 5: Documentation & packages
 - [x] Step 6: Final mart table (analytics)
-- [ ] **Step 7: CI/CD with GitHub Actions** <-- You are here
+- [x] Step 7: CI/CD with GitHub Actions 
 
 ---
 
