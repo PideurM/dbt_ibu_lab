@@ -103,12 +103,9 @@ models:
       - name: shooting_total
         description: "Total number of missed shots."
         tests:
-          # TODO: Add a dbt_expectations.expect_column_values_to_be_between test
-          # What is the minimum and maximum number of missed shots possible?
-          # Hint: Look up biathlon shooting rules — how many stages and targets per race format?
           - dbt_expectations.expect_column_values_to_be_between:
               min_value: 0
-              max_value: 5  # This will FAIL — find the correct max value!
+              max_value: 32
       - name: run_time
         description: "Ski time excluding penalties."
       - name: total_time
