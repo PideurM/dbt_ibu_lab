@@ -286,23 +286,27 @@ Try adding this to your rank test. This is useful when you accept known edge cas
 **Tasks:**
 1. Add descriptions to `models/marts/_schema.yml` for all models and columns
 2. Add descriptions to `models/staging/_sources.yml`
-3. Generate and serve the documentation:
+3. Install dbt packages (needed for documentation generation):
+   ```bash
+   uv run dbt deps
+   ```
+4. Generate and serve the documentation:
    ```bash
    uv run dbt docs generate
    uv run dbt docs serve
    ```
-4. Open the browser and explore:
+5. Open the browser and explore:
    - Model pages: descriptions, columns, SQL
    - **DAG view** (bottom-right icon): visualize the dependency graph
    - Observe: source → staging → dimensions/fact
-5. Check `dbt_project.yml` — notice the `persist_docs` config:
+6. Check `dbt_project.yml` — notice the `persist_docs` config:
    ```yaml
    +persist_docs:
      relation: true
      columns: true
    ```
    This tells dbt to push your YAML descriptions directly into Snowflake as `COMMENT` on views and columns.
-6. Run `dbt run` and then check in Snowflake: your views now have descriptions visible in the UI!
+7. Run `dbt run` and then check in Snowflake: your views now have descriptions visible in the UI!
 
 **Key concepts:**
 - Documentation is defined alongside the code in YAML
@@ -324,14 +328,11 @@ Try adding this to your rank test. This is useful when you accept known edge cas
      - package: calogica/dbt_expectations
        version: [">=0.10.0", "<1.0.0"]
    ```
-2. Install packages:
-   ```bash
-   uv run dbt deps
-   ```
-3. Use `dbt_utils.generate_surrogate_key` in `fct_results.sql` to create a `result_id`
-4. Add tests from `dbt_expectations` in `_schema.yml` (e.g., `expect_column_values_to_be_between`)
-5. Run `uv run dbt build` — observe the **failing test** on `shooting_total`
-6. **Exercise:** Fix the `expect_column_values_to_be_between` test on `shooting_total`:
+   (Packages were already installed in 5.1 with `dbt deps`.)
+2. Use `dbt_utils.generate_surrogate_key` in `fct_results.sql` to create a `result_id`
+3. Add tests from `dbt_expectations` in `_schema.yml` (e.g., `expect_column_values_to_be_between`)
+4. Run `uv run dbt build` — observe the **failing test** on `shooting_total`
+5. **Exercise:** Fix the `expect_column_values_to_be_between` test on `shooting_total`:
    - The current `max_value` is wrong. How many shots can an athlete miss in a race?
    - Research biathlon rules: how many shooting stages are there? How many targets per stage?
    - Consider all race formats (sprint, individual, pursuit, mass start, relay legs)
