@@ -247,6 +247,22 @@ Now it's your turn! Open `models/intermediate/cleaned_measures.sql` and the macr
 
 Add tests for `stg_race_results` in a new `models/staging/_schema.yml`. What columns should be tested?
 
+### Exercise 3: Tolerance with warn_if / error_if
+
+After fixing the rank test with `where: "irm IS NULL"`, you may still have a few edge cases (para-biathlon athletes with no rank and no IRM). Instead of failing the pipeline, you can set tolerance thresholds:
+
+```yaml
+- not_null:
+    where: "irm IS NULL"
+    warn_if: ">0"
+    error_if: ">10"
+```
+
+- `warn_if: ">0"` — emit a **warning** if any rows fail (pipeline continues)
+- `error_if: ">10"` — only **error** if more than 10 rows fail (pipeline stops)
+
+Try adding this to your rank test. This is useful when you accept known edge cases in the data without breaking the build.
+
 **Key concepts:**
 - 4 built-in tests: `unique`, `not_null`, `accepted_values`, `relationships`
 - Tests are SQL queries — a test fails if it returns rows
