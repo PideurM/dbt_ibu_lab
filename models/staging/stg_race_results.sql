@@ -20,7 +20,7 @@ SELECT
     isteam::BOOLEAN AS is_team,
     startorder::INT AS start_order,
     resultorder::INT AS result_order,
-    irm,
+    NULLIF(irm, '') AS irm,
     bib::INT AS bib,
     leg::INT AS leg,
     rank::INT AS rank,
