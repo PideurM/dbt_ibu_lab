@@ -59,9 +59,16 @@ uv sync
 
 **Tasks:**
 1. Create a `.env` file based on `.env.sample` with your Snowflake credentials
-2. Ensure `.env` is in `.gitignore` 
-3. Review `profiles.yml` — notice how `{{ env_var() }}` reads from `.env`
-4. Test the connection:
+2. Ensure `.env` is in `.gitignore`
+3. Load the environment variables:
+   ```bash
+   set -a
+   source .env
+   set +a
+   ```
+   > **Why not just `source .env`?** When you do `source .env`, the variables exist in your current shell session but are **not passed down** to child processes. `dbt debug` runs as a child process — it won't see your variables unless they are **exported**. `set -a` tells your shell to automatically `export` every variable assignment, so `source .env` exports everything. `set +a` turns off auto-export afterward.
+4. Review `profiles.yml` — notice how `{{ env_var() }}` reads from environment variables
+5. Test the connection:
    ```bash
    uv run dbt debug
    ```
