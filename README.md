@@ -321,7 +321,12 @@ Try adding this to your rank test. This is useful when you accept known edge cas
    ```
 3. Use `dbt_utils.generate_surrogate_key` in `fct_results.sql` to create a `result_id`
 4. Add tests from `dbt_expectations` in `_schema.yml` (e.g., `expect_column_values_to_be_between`)
-5. Run:
+5. Run `uv run dbt build` — observe the **failing test** on `shooting_total`
+6. **Exercise:** Fix the `expect_column_values_to_be_between` test on `shooting_total`:
+   - The current `max_value` is wrong. How many shots can an athlete miss in a race?
+   - Research biathlon rules: how many shooting stages are there? How many targets per stage?
+   - Consider all race formats (sprint, individual, pursuit, mass start, relay legs)
+   - Update the `max_value` to make the test pass
    ```bash
    uv run dbt build
    ```
