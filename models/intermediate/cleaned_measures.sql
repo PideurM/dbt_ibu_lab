@@ -25,7 +25,10 @@ SELECT
     leg,
     rank,
     {{ select_spares('shootings') }},
-    shooting_total,
+    CASE WHEN POSITION('+' IN shooting_total) > 0
+        THEN LEFT(shooting_total, POSITION('+' IN shooting_total) - 1)::INT + RIGHT(shooting_total, LENGTH(shooting_total) - POSITION('+' IN shooting_total))::INT
+        ELSE shooting_total::INT
+    END AS shooting_total,
     run_time,
     total_time,
     wc,
