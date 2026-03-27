@@ -5,15 +5,28 @@ Build a star-schema datamart from scratch using **dbt-core** and **Snowflake**, 
 ## Prerequisites
 
 - Python 3.12+
-- [uv](https://docs.astral.sh/uv/) (Python package manager)
 - Snowflake account (provided by instructor)
 - Git installed
 - Terminal / VS Code
 
 ## Installation
 
+1. Install [uv](https://docs.astral.sh/uv/) (Python package manager):
+   ```bash
+   curl -LsSf https://astral.sh/uv/install.sh | sh
+   ```
+2. Install project dependencies:
+   ```bash
+   uv sync
+   ```
+
+## Navigating the course
+
+Each step of the course is a git branch. To move to a step:
 ```bash
-uv sync
+git checkout step/01-init-proj   # Start here
+git checkout step/02-star-schema # Next step (contains step 1 solution)
+# etc.
 ```
 
 ## Course Progress
