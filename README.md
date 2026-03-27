@@ -153,7 +153,14 @@ Project initialized with dbt-core + Snowflake connection via `profiles.yml` and 
    ```bash
    uv run dbt run --select cleaned_measures_raw
    ```
-2. Observe the error: What is happening ?
+2. Surprise: dbt says **SUCCESS** — the view is created in Snowflake!
+3. Now try to query it:
+   ```bash
+   uv run dbt show --select cleaned_measures_raw
+   ```
+4. **Error!** The view exists in Snowflake but the SQL inside fails when queried.
+
+> **Why?** With `materialized: view`, dbt runs `CREATE VIEW AS SELECT ...`. Snowflake accepts the DDL without executing the SELECT — it only validates syntax, not data. When you (or dbt show) actually **query** the view, Snowflake runs the SELECT and hits the casting error. This is a key difference between views and tables: a table would fail immediately at `dbt run` because the SELECT is executed to materialize the data.
 
 ### Step 3.2 — The `parse_iso_timestamp` macro (demo)
 
