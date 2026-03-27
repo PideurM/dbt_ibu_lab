@@ -66,8 +66,8 @@ Project initialized with dbt-core + Snowflake connection via `profiles.yml` and 
    version: 2
    sources:
      - name: raw
-       database: DBT_IBU_LAB
-       schema: RAW
+       database: "{{ env_var('SNOWFLAKE_DATABASE') }}"
+       schema: "{{ env_var('SNOWFLAKE_SCHEMA') }}"
        tables:
          - name: races_results_raw
    ```
