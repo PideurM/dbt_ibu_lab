@@ -30,7 +30,7 @@ jobs:
         run: uv sync
 
       - name: Install dbt packages
-        run: # TODO: which command installs dbt packages?
+        run: uv run dbt deps
 
       - name: Run dbt build (models + tests)
-        run: # TODO: which command runs models and tests together?
+        run: uv run dbt build

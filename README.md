@@ -20,11 +20,16 @@ Build a star-schema datamart from scratch using **dbt-core** and **Snowflake**, 
    uv sync
    ```
 
-## Navigating the course
+## Getting Started
 
-Each step of the course is a git branch. To move to a step:
+This branch (`main`) contains the fully completed course. **To start the lab, checkout the first branch:**
+
 ```bash
-git checkout step/01-init-proj   # Start here
+git checkout step/01-init-proj
+```
+
+Each step of the course is a git branch. Checkout the next branch to see the solution and get the next exercise:
+```bash
 git checkout step/02-star-schema # Next step (contains step 1 solution)
 # etc.
 ```
