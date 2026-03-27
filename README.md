@@ -295,12 +295,21 @@ Try adding this to your rank test. This is useful when you accept known edge cas
    - Model pages: descriptions, columns, SQL
    - **DAG view** (bottom-right icon): visualize the dependency graph
    - Observe: source → staging → dimensions/fact
+5. Check `dbt_project.yml` — notice the `persist_docs` config:
+   ```yaml
+   +persist_docs:
+     relation: true
+     columns: true
+   ```
+   This tells dbt to push your YAML descriptions directly into Snowflake as `COMMENT` on views and columns.
+6. Run `dbt run` and then check in Snowflake: your views now have descriptions visible in the UI!
 
 **Key concepts:**
 - Documentation is defined alongside the code in YAML
 - `dbt docs generate` compiles a static website
 - The DAG shows the full data lineage
 - How `ref()` and `source()` build the DAG automatically
+- `persist_docs` syncs descriptions to the warehouse — documentation lives in both dbt and Snowflake
 
 ### Step 5.2 — dbt packages
 

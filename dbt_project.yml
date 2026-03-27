@@ -10,3 +10,6 @@ clean-targets: ["target", "dbt_packages"]
 models:
   dbt_biathlon:
     +materialized: view
+    +persist_docs:
+      relation: true
+      columns: true
