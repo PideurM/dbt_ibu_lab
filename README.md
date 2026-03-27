@@ -414,17 +414,18 @@ For each athlete and race, compute their **cumulative average rank** ordered by 
 **Tasks:**
 1. Open `.github/workflows/dbt_ci.yml` and complete the two TODO steps
    - Think about which commands you used during the course
-   - Triggers on push/PR to `main`
+   - Triggers on push/PR to `main` and manually via `workflow_dispatch`
    - Uses GitHub Secrets for Snowflake credentials
 2. Add Snowflake secrets in GitHub: **Settings → Secrets → Actions**
    - `SNOWFLAKE_ACCOUNT`, `SNOWFLAKE_USER`, `SNOWFLAKE_PASSWORD`
    - `SNOWFLAKE_ROLE`, `SNOWFLAKE_WAREHOUSE`, `SNOWFLAKE_DATABASE`, `SNOWFLAKE_SCHEMA`
-3. Push and observe the workflow run in the **Actions** tab
+3. Trigger the workflow manually: go to **Actions** tab → select "dbt CI" → click **"Run workflow"**
 
 **Key concepts:**
 - CI/CD — automated quality gates on every push
 - GitHub Secrets — secure credential management
 - `dbt build` in CI ensures models compile, run, and pass tests
+- `workflow_dispatch` allows triggering the pipeline manually from the GitHub UI
 - Every push triggers the pipeline automatically
 
 **Questions:**
