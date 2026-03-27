@@ -412,10 +412,9 @@ For each athlete and race, compute their **cumulative average rank** ordered by 
 **Goal:** Automate dbt build and tests on every push.
 
 **Tasks:**
-1. Create `.github/workflows/dbt_ci.yml` with a workflow that:
+1. Open `.github/workflows/dbt_ci.yml` and complete the two TODO steps
+   - Think about which commands you used during the course
    - Triggers on push/PR to `main`
-   - Sets up uv and installs dependencies
-   - Runs `dbt deps` then `dbt build`
    - Uses GitHub Secrets for Snowflake credentials
 2. Add Snowflake secrets in GitHub: **Settings → Secrets → Actions**
    - `SNOWFLAKE_ACCOUNT`, `SNOWFLAKE_USER`, `SNOWFLAKE_PASSWORD`
